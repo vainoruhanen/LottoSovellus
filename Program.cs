@@ -1,10 +1,4 @@
-﻿
-using System;
-using System.Net.Sockets;
-using System.Text;
-using System.Xml;
-//Go through commenting
-//Everything seems to work, check for bugs
+﻿using System.Text;
 public class MainApp
 {
     static List<int> RandomizeLottery(Random random) //arpoo listan joka sisältää 7 uniikkia kokonaislukua väliltä 1-40
@@ -17,20 +11,20 @@ public class MainApp
         {
             while (true) //Jos numero löytyy jo listasta arvotaan uusi niin pitkään kunnes se on uniikki
             {
-                int randomNumber = random.Next(min, max + 1);
+                int randomNumber = random.Next(min, max + 1); //arpoo satunnaisluvun väliltä 1-40
 
                 if (!randomNumbers.Contains(randomNumber))
                 {
                     randomNumbers.Add(randomNumber);
-                    break; //numeron ollessa uniikki poistutaan while loopista
+                    break;
                 }
             }   
         }
-        return randomNumbers; //palauttaa listan kokonaislukuja
+        return randomNumbers;
     }
 
   
-    static bool ValidateNumbers(List<int> numbers)
+    static bool ValidateNumbers(List<int> numbers) 
     {
         List <int> uniqueNumbers = new List<int>();
 
@@ -40,25 +34,25 @@ public class MainApp
             return false;
         }
         
-        for(int i = 0; i < numbers.Count; i++)
+        foreach(int number in numbers)
         {
-            if (numbers[i] > 40 || numbers[i] < 1)
+            if (number > 40 || number < 1)
             {
                 Console.WriteLine("Inputted numbers must be between 1-40");
                 return false;
             }
 
-            if (uniqueNumbers.Contains(numbers[i])) //Tarkista onko jokainen numero uniikki
+            if (uniqueNumbers.Contains(number)) //Tarkista onko jokainen numero uniikki
             {
                 Console.WriteLine("Inputted numbers must be unique");
                 return false;
             }
-            uniqueNumbers.Add(numbers[i]);
+            uniqueNumbers.Add(number);
         }
         return true; //palautetaan true jos kaikki validoinnit meni läpi
     }
 
-    static List<int> AskNumbers() 
+    static List<int> AskNumbers() //Kysyy käyttäjältä numerot millä pelataan ja palauttaa ne listana
     {
         bool isValid = false;
         List<int> validatedList = new List<int>();
@@ -96,7 +90,7 @@ public class MainApp
         return validatedList;
     }
 
-    static void PrintEndScreen(int totalRounds, int totalSpent, int totalWinnings, int result)
+    static void PrintEndScreen(int totalRounds, int totalSpent, int totalWinnings, int result) 
     {
         Console.WriteLine();
         Console.WriteLine();
@@ -108,7 +102,7 @@ public class MainApp
         Console.WriteLine("Thanks for playing!");
     }
 
-    static void PrintAfterRound(int totalRounds, int totalSpent, int totalWinnings) {
+    static void PrintAfterRound(int totalRounds, int totalSpent, int totalWinnings) { //Tulostus kierrosten välissä
         Console.Write($"\r Rounds: {totalRounds} | Spent: {totalSpent},00 € | Won: {totalWinnings},00 €");
     }
     static void GameLogic(List<int> playerNumbers, int selectedMode, int roundNumber)
@@ -119,19 +113,19 @@ public class MainApp
         int totalSpent = 0;
         int profit = 0;
         int roundsPlayed = 0;
-        Random random = new();
+        Random random = new(); //Random numero generaattori, jota käytetään arpoessa lottonumeroita
 
 
         void PlayOneRound()
         {
-            roundsPlayed++; //Laskee pelattujen kierrosten määrää
-            totalSpent += roundPrice; //Laskee käytetyn rahan määrän
-            matchesPerGame = CompareNumbers(playerNumbers, RandomizeLottery(random));
+            roundsPlayed++;
+            totalSpent += roundPrice; 
+            matchesPerGame = CompareNumbers(playerNumbers, RandomizeLottery(random)); //Laskee montako oikein pelaaja sai
             totalWinnings += GetPayout(matchesPerGame);
             PrintAfterRound(roundsPlayed, totalSpent, totalWinnings);
         }
 
-        if (selectedMode == 1)
+        if (selectedMode == 1) //Peli 1
         {
             for (int i = 0; i < roundNumber; i++)
             {
@@ -140,7 +134,7 @@ public class MainApp
             }
         }
 
-        if (selectedMode == 2)
+        if (selectedMode == 2) //Peli 2
         {
             Console.WriteLine();
             Console.WriteLine("Auto-play running... Press 'SPACE' to stop.");
@@ -149,9 +143,9 @@ public class MainApp
             {
                 PlayOneRound();
 
-                if (Console.KeyAvailable) //Jos käyttäjä painaa jotain näppäimistössä
+                if (Console.KeyAvailable) //Jos käyttäjä painaa jotain näppäimistössä, tämä mahdollistaa sen, että luuppi pyörii kunnes käyttäjä painaa jotain
                 {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true); //lukee käyttäjän painaman keyn, mutta ei näytä sitä consolessa
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true); //lukee käyttäjän painaman näppäimen, mutta ei näytä sitä consolessa
 
                     if (keyInfo.Key == ConsoleKey.Spacebar) //Tarkistetaan onko se space
                     {
@@ -163,13 +157,13 @@ public class MainApp
         }
 
         profit = totalWinnings - totalSpent; //Laskee paljonko käyttäjä on voitolla
-        PrintEndScreen(roundsPlayed, totalSpent, totalWinnings, profit);
+        PrintEndScreen(roundsPlayed, totalSpent, totalWinnings, profit); //Pelin päättyessä tulostetaan loppunäkymä
     }
 
 
     static int GetPayout(int matches)
     {
-        Dictionary<int, int> payouts = new Dictionary<int, int>(); //number of matches, money paid
+        Dictionary<int, int> payouts = new Dictionary<int, int>(); //osumien määrä, raha voitettu
 
         payouts.Add(1, 0);
         payouts.Add(2, 0);
@@ -187,23 +181,17 @@ public class MainApp
         return 0;
     }
 
-    static int CompareNumbers(List<int> playerNumbers, List<int> randomNumbers)
+    static int CompareNumbers(List<int> playerNumbers, List<int> randomNumbers) //Vertaa käyttäjän numeroita, lottonumeroihin ja palauttaa osumien määrän
     {
         int amountOfMatches = 0;
 
-        for(int i = 0; i < playerNumbers.Count; i++)
+        foreach(int number in playerNumbers)
         {
-            if (randomNumbers.Contains(playerNumbers[i]))
+            if (randomNumbers.Contains(number))
             {
                 amountOfMatches++;
-               // Console.WriteLine("YES MATCH");
-            }
-            else
-            {
-                //Console.WriteLine("NO MATCH");
             }
         }
-
         return amountOfMatches;
     }
 
@@ -244,8 +232,9 @@ public class MainApp
             }
         }
 
-        if(selectedMode == 1)
+        if(selectedMode == 1) //Peli 1
         {
+            Console.WriteLine();
             int roundNumber = 0;
             string userInput = "";
             while (true)
@@ -254,7 +243,7 @@ public class MainApp
                 userInput = Console.ReadLine() ?? string.Empty;
 
                 bool isNumber = int.TryParse(userInput, out roundNumber);
-
+                 
                 if (!isNumber)
                 {
                     Console.WriteLine("Input must be a number between 1-1,000,000");
@@ -265,7 +254,7 @@ public class MainApp
                 }
             }
             GameLogic(playerNumbers, selectedMode, roundNumber);
-        } else if(selectedMode == 2)
+        } else if(selectedMode == 2) //Peli 2
         {
             GameLogic(playerNumbers, selectedMode, 0);
         }
