@@ -103,7 +103,7 @@ public class MainApp
     }
 
     static void PrintAfterRound(int totalRounds, int totalSpent, int totalWinnings) { //Tulostus kierrosten välissä
-        Console.Write($"\r Rounds: {totalRounds} | Spent: {totalSpent},00 € | Won: {totalWinnings},00 €");
+        Console.Write($"\rRounds: {totalRounds} | Spent: {totalSpent},00 € | Won: {totalWinnings},00 €");
     }
     static void GameLogic(List<int> playerNumbers, int selectedMode, int roundNumber)
     {
