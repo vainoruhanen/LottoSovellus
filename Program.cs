@@ -55,27 +55,31 @@ public class MainApp
     static List<int> AskNumbers() //Kysyy käyttäjältä numerot millä pelataan ja palauttaa ne listana
     {
         bool isValid = false;
+        bool isNumber = true;
         List<int> validatedList = new List<int>();
 
-        while (!isValid) {
+        while (!isValid || !isNumber) {
         Console.Write("Enter 7 unique numbers between 1 and 40, separated by commas: ");
         string userInput = Console.ReadLine() ?? string.Empty;
-        bool isNumber = true;
+        
 
         string[] parts = userInput.Split(',');
 
         List<int> userInputtedList = new List<int>();
 
+        
         foreach(string part in parts)
         {
             if(int.TryParse(part, out int n))
             {
                 userInputtedList.Add(n);
-            }
+                isNumber = true;
+                }
             else
             {
                     Console.WriteLine("All inputs must be valid numbers");
                     isNumber = false; //Mikäli käyttäjä syöttää muuta, kuin numeroita asetetaan isnumber falseksi
+                    break;
             }
         }
             isValid = ValidateNumbers(userInputtedList);
