@@ -173,12 +173,12 @@ public class MainApp
         payouts.Add(6, 10000);
         payouts.Add(7, 100000);
 
-        if (payouts.ContainsKey(matches)) //turha if check? matches pitäisi aina osua 0-7 välille
+        if (payouts.ContainsKey(matches))
         {
             return payouts[matches]; //palauttaa oikean rahasumman osumien mukaan
         }
 
-        return 0;
+        return 0; //Jos osumia 0
     }
 
     static int CompareNumbers(List<int> playerNumbers, List<int> randomNumbers) //Vertaa käyttäjän numeroita, lottonumeroihin ja palauttaa osumien määrän
