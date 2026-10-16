@@ -23,7 +23,6 @@ public class MainApp
         return randomNumbers;
     }
 
-  
     static bool ValidateNumbers(List<int> numbers) 
     {
         List <int> uniqueNumbers = new List<int>();
@@ -58,37 +57,35 @@ public class MainApp
         bool isNumber = true;
         List<int> validatedList = new List<int>();
 
-        while (!isValid || !isNumber) {
-        Console.Write("Enter 7 unique numbers between 1 and 40, separated by commas: ");
-        string userInput = Console.ReadLine() ?? string.Empty;
-        
-
-        string[] parts = userInput.Split(',');
-
-        List<int> userInputtedList = new List<int>();
-
-        
-        foreach(string part in parts)
+        while (!isValid || !isNumber) 
         {
-            if(int.TryParse(part, out int n))
+            Console.Write("Enter 7 unique numbers between 1 and 40, separated by commas: ");
+            string userInput = Console.ReadLine() ?? string.Empty;
+            string[] parts = userInput.Split(',');
+
+            List<int> userInputtedList = new List<int>();
+
+            foreach(string part in parts)
             {
-                userInputtedList.Add(n);
-                isNumber = true;
+                if(int.TryParse(part, out int n))
+                {
+                    userInputtedList.Add(n);
+                    isNumber = true;
                 }
-            else
-            {
+                else
+                {
                     Console.WriteLine("All inputs must be valid numbers");
                     isNumber = false; //Mikäli käyttäjä syöttää muuta, kuin numeroita asetetaan isnumber falseksi
                     break;
+                }
             }
-        }
-            isValid = ValidateNumbers(userInputtedList);
-            if (isValid && isNumber)
-            {
-                validatedList = userInputtedList;
-                Console.WriteLine();
-                Console.WriteLine($"Your chosen numbers: [{string.Join(", ", validatedList)}]");
-            }
+                isValid = ValidateNumbers(userInputtedList);
+                if (isValid && isNumber)
+                {
+                    validatedList = userInputtedList;
+                    Console.WriteLine();
+                    Console.WriteLine($"Your chosen numbers: [{string.Join(", ", validatedList)}]");
+                }
         }
        
         return validatedList;
@@ -106,7 +103,8 @@ public class MainApp
         Console.WriteLine("Thanks for playing!");
     }
 
-    static void PrintAfterRound(int totalRounds, int totalSpent, int totalWinnings) { //Tulostus kierrosten välissä
+    static void PrintAfterRound(int totalRounds, int totalSpent, int totalWinnings) //Tulostus kierrosten välissä
+    { 
         Console.Write($"\rRounds: {totalRounds} | Spent: {totalSpent},00 € | Won: {totalWinnings},00 €");
     }
     static void GameLogic(List<int> playerNumbers, int selectedMode, int roundNumber)
