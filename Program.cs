@@ -79,13 +79,14 @@ public class MainApp
                     break;
                 }
             }
-                isValid = ValidateNumbers(userInputtedList);
-                if (isValid && isNumber)
-                {
-                    validatedList = userInputtedList;
-                    Console.WriteLine();
-                    Console.WriteLine($"Your chosen numbers: [{string.Join(", ", validatedList)}]");
-                }
+
+            isValid = ValidateNumbers(userInputtedList);  //testaa onko lista validi ja palauttaa true tai false sen mukaan
+            if (isValid && isNumber)
+            {
+                validatedList = userInputtedList;
+                Console.WriteLine();
+                Console.WriteLine($"Your chosen numbers: [{string.Join(", ", validatedList)}]");
+            }
         }
        
         return validatedList;
@@ -116,7 +117,6 @@ public class MainApp
         int profit = 0;
         int roundsPlayed = 0;
         Random random = new(); //Random numero generaattori, jota käytetään arpoessa lottonumeroita
-
 
         void PlayOneRound()
         {
