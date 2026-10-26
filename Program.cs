@@ -26,14 +26,12 @@ public class MainApp
                     playerNumbers = AskLottoNumbers();
                     AskRoundNumber(out numberOfRounds);
                     PlayGame(playerNumbers, selectedMode, numberOfRounds, out totalRounds, out moneySpent, out totalWon, out netResult);
-                    PrintEndScreen(totalRounds, moneySpent, totalWon, netResult);
                     SaveResults(savePath, totalRounds, moneySpent, totalWon, netResult, playerNumbers, breakLine);
                     break;
 
                 case 2: //Peli 2
                     playerNumbers = AskLottoNumbers();
                     PlayGame(playerNumbers, selectedMode, 0, out totalRounds, out moneySpent, out totalWon, out netResult);
-                    PrintEndScreen(totalRounds, moneySpent, totalWon, netResult);
                     SaveResults(savePath, totalRounds, moneySpent, totalWon, netResult, playerNumbers, breakLine);
                     break;
 
@@ -445,6 +443,8 @@ public class MainApp
         moneySpent = totalSpent;
         totalWon = totalWinnings;
         netResult = profit;
+
+        PrintEndScreen(totalRounds, moneySpent, totalWon, netResult);
     }
 
     static void PrintAutoPlayText()
