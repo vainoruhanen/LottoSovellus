@@ -307,7 +307,7 @@ public class MainApp
             }
             uniqueNumbers.Add(number);
         }
-        return true; //palautetaan true jos kaikki validoinnit meni läpi
+        return true; 
     }
 
     /// <summary>
@@ -318,31 +318,32 @@ public class MainApp
     {
         bool isValidNumbers = false;
         bool isNumber = true;
-        List<int> validatedList = new();
+        List<int> lottoNumbers = new();
         List<int> defaultNumbers = new([1, 2, 3, 4, 5, 6, 7]);
 
         while (!isValidNumbers || !isNumber) 
         {
             Console.Write("Enter 7 unique numbers between 1 and 40, separated by commas: ");
             string userInput = Console.ReadLine() ?? string.Empty;
+            lottoNumbers = [];
 
-            if(userInput == string.Empty) //tyhjällä inputilla default numerot 1-7
+            if (userInput == string.Empty) //tyhjällä inputilla default numerot 1-7
             {
-                validatedList = defaultNumbers;
+                lottoNumbers = defaultNumbers;
                 Console.WriteLine();
-                Console.WriteLine($"Your chosen numbers: [{string.Join(", ", validatedList)}]");
+                Console.WriteLine($"Your chosen numbers: [{string.Join(", ", lottoNumbers)}]");
                 break;
             }
 
             string[] parts = userInput.Split(',');
 
-            List<int> userInputtedList = new();
+            
 
             foreach(string part in parts)
             {
                 if(int.TryParse(part, out int n))
                 {
-                    userInputtedList.Add(n);
+                    lottoNumbers.Add(n);
                     isNumber = true;
                 }
                 else
@@ -358,15 +359,14 @@ public class MainApp
                 continue; //Aloittaa while loopin alusta mikäli syöte ei ole numero
             }
 
-            isValidNumbers = ValidateNumbers(userInputtedList);  //testaa onko lista validi ja palauttaa true tai false sen mukaan
+            isValidNumbers = ValidateNumbers(lottoNumbers);  //testaa onko lista validi ja palauttaa true tai false sen mukaan
             if (isValidNumbers)
             {
-                validatedList = userInputtedList;
                 Console.WriteLine();
-                Console.WriteLine($"Your chosen numbers: [{string.Join(", ", validatedList)}]");
+                Console.WriteLine($"Your chosen numbers: [{string.Join(", ", lottoNumbers)}]");
             }
         }
-        return validatedList;
+        return lottoNumbers;
     }
 
     static void PrintEndScreen(int totalRounds, int totalSpent, int totalWinnings, int result) 
