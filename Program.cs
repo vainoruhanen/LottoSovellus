@@ -60,7 +60,7 @@ public class MainApp
         string gameNumber = $"Game: {CountGames(path, breakLine) + 1}";
         string currentTime = $"({DateTime.Now.ToString("dd.MM.yyyy, HH':'mm':'ss")})";
 
-        string saveText = $"{gameNumber} {currentTime}\n{gameStats}\n{breakLine}";
+        string saveText = $"{gameNumber}\n{currentTime}\n\n{gameStats}\n{breakLine}";
 
         File.AppendAllText(path, saveText + Environment.NewLine);
     }
@@ -107,7 +107,6 @@ public class MainApp
                     Console.WriteLine(line);
                 }
             }
-            Console.WriteLine();
         }
     }
 
