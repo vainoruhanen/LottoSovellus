@@ -17,6 +17,7 @@ public class MainApp
 
         while (keepPlaying)
         {
+            totalRounds = 0;
             IntroText();
             selectedMode = AskChoice("Choice (1/2/3/4): ", 4);
 
@@ -26,13 +27,11 @@ public class MainApp
                     playerNumbers = AskLottoNumbers();
                     AskRoundNumber(out numberOfRounds);
                     PlayGame(playerNumbers, selectedMode, numberOfRounds, out totalRounds, out moneySpent, out totalWon, out netResult);
-                    SaveResults(savePath, totalRounds, moneySpent, totalWon, netResult, playerNumbers, breakLine);
                     break;
 
                 case 2: //Peli 2
                     playerNumbers = AskLottoNumbers();
                     PlayGame(playerNumbers, selectedMode, 0, out totalRounds, out moneySpent, out totalWon, out netResult);
-                    SaveResults(savePath, totalRounds, moneySpent, totalWon, netResult, playerNumbers, breakLine);
                     break;
 
                 case 3: //Lopeta pelaaminen
@@ -43,6 +42,9 @@ public class MainApp
                     ShowStats(savePath, breakLine);
                     break;
             }
+            SaveResults(savePath, totalRounds, moneySpent, totalWon, netResult, playerNumbers, breakLine);
+            PrintEndScreen(totalRounds, moneySpent, totalWon, netResult);
+
         }
     }
 
@@ -56,13 +58,15 @@ public class MainApp
     /// <param name="playerNumbers"></param>
     static void SaveResults(string path, int totalRounds, int moneySpent, int totalWon, int netResult, List<int> playerNumbers, string breakLine)
     {
+        if(totalRounds > 0) //tarkistaa ennen tallennusta että kierroksia on pelattu, välttääkseen tyhjät tallennukset
+        {
         string gameStats = $"Player Numbers: [{string.Join(", ", playerNumbers)}]\nRounds played: {totalRounds}\nMoney spent: {moneySpent},00€\nMoney won: {totalWon},00€\nNet result: {netResult},00€";
         string gameNumber = $"Game: {CountGames(path, breakLine) + 1}";
         string currentTime = $"({DateTime.Now.ToString("dd.MM.yyyy, HH':'mm':'ss")})";
 
         string saveText = $"{gameNumber}\n{currentTime}\n\n{gameStats}\n{breakLine}";
-
         File.AppendAllText(path, saveText + Environment.NewLine);
+        }
     }
 
     /// <summary>
@@ -371,15 +375,18 @@ public class MainApp
 
     static void PrintEndScreen(int totalRounds, int totalSpent, int totalWinnings, int result) 
     {
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine("=== Final Summary ===");
-        Console.WriteLine($"Total rounds: {totalRounds}");
-        Console.WriteLine($"Total spent: {totalSpent},00 €");
-        Console.WriteLine($"Total winnings: {totalWinnings},00 €");
-        Console.WriteLine($"Net result: {result},00 €");
-        Console.WriteLine("Thanks for playing!");
-        Console.WriteLine();
+        if (totalRounds > 0)
+        {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("=== Final Summary ===");
+            Console.WriteLine($"Total rounds: {totalRounds}");
+            Console.WriteLine($"Total spent: {totalSpent},00 €");
+            Console.WriteLine($"Total winnings: {totalWinnings},00 €");
+            Console.WriteLine($"Net result: {result},00 €");
+            Console.WriteLine("Thanks for playing!");
+            Console.WriteLine();
+        }
     }
 
 
@@ -443,8 +450,6 @@ public class MainApp
         moneySpent = totalSpent;
         totalWon = totalWinnings;
         netResult = profit;
-
-        PrintEndScreen(totalRounds, moneySpent, totalWon, netResult);
     }
 
     static void PrintAutoPlayText()
