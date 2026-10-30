@@ -1,10 +1,10 @@
 ﻿using System.Text;
 public class MainApp
 {
+    enum GameMode { Normal = 1, Continuous = 2, EndGame = 3, Stats = 4 }
     static void Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8; // Tämä mahdollistaa euro merkkien tulostuksen konsoliin
-        int selectedMode = 0; //valittu gamemode (1 = kiinteä kierrosmäärä, 2 = loputon peli, 3 = lopeta pelaaminen 4 = statsit)
         int numberOfRounds = 0;
         List<int> playerNumbers = new();
         int totalRounds = 0;
@@ -14,37 +14,38 @@ public class MainApp
         string savePath = "Results.txt";
         string breakLine = "--------------------------------------"; //Erotus viiva tallennetujen pelejen välissä
         bool keepPlaying = true;
-
+        
+        
         while (keepPlaying)
         {
             totalRounds = 0;
             IntroText();
-            selectedMode = AskChoice("Choice (1/2/3/4): ", 4);
+            int modeValue = AskChoice("Choice (1/2/3/4): ", 4);
+            GameMode selectedMode = (GameMode)modeValue;
 
             switch (selectedMode)
             {
-                case 1: //Peli 1
+                case GameMode.Normal: //Peli 1
                     playerNumbers = AskLottoNumbers();
                     AskRoundNumber(out numberOfRounds);
-                    PlayGame(playerNumbers, selectedMode, numberOfRounds, out totalRounds, out moneySpent, out totalWon, out netResult);
+                    PlayGame(playerNumbers, (int)selectedMode, numberOfRounds, out totalRounds, out moneySpent, out totalWon, out netResult);
                     break;
 
-                case 2: //Peli 2
+                case GameMode.Continuous: //Peli 2
                     playerNumbers = AskLottoNumbers();
-                    PlayGame(playerNumbers, selectedMode, 0, out totalRounds, out moneySpent, out totalWon, out netResult);
+                    PlayGame(playerNumbers, (int)selectedMode, 0, out totalRounds, out moneySpent, out totalWon, out netResult);
                     break;
 
-                case 3: //Lopeta pelaaminen
+                case GameMode.EndGame: //Lopeta pelaaminen
                     keepPlaying = false;
                     break;
 
-                case 4: //Statsit
+                case GameMode.Stats: //Statsit
                     ShowStats(savePath, breakLine);
                     break;
             }
             SaveResults(savePath, totalRounds, moneySpent, totalWon, netResult, playerNumbers, breakLine);
             PrintEndScreen(totalRounds, moneySpent, totalWon, netResult);
-
         }
     }
 
@@ -58,14 +59,14 @@ public class MainApp
     /// <param name="playerNumbers"></param>
     static void SaveResults(string path, int totalRounds, int moneySpent, int totalWon, int netResult, List<int> playerNumbers, string breakLine)
     {
-        if(totalRounds > 0) //tarkistaa ennen tallennusta että kierroksia on pelattu, välttääkseen tyhjät tallennukset
+        if (totalRounds > 0) //tarkistaa ennen tallennusta että kierroksia on pelattu, välttääkseen tyhjät tallennukset
         {
-        string gameStats = $"Player Numbers: [{string.Join(", ", playerNumbers)}]\nRounds played: {totalRounds}\nMoney spent: {moneySpent},00€\nMoney won: {totalWon},00€\nNet result: {netResult},00€";
-        string gameNumber = $"Game: {CountGames(path, breakLine) + 1}";
-        string currentTime = $"({DateTime.Now.ToString("dd.MM.yyyy, HH':'mm':'ss")})";
+            string gameStats = $"Player Numbers: [{string.Join(", ", playerNumbers)}]\nRounds played: {totalRounds}\nMoney spent: {moneySpent},00€\nMoney won: {totalWon},00€\nNet result: {netResult},00€";
+            string gameNumber = $"Game: {CountGames(path, breakLine) + 1}";
+            string currentTime = $"({DateTime.Now.ToString("dd.MM.yyyy, HH':'mm':'ss")})";
 
-        string saveText = $"{gameNumber}\n{currentTime}\n\n{gameStats}\n{breakLine}";
-        File.AppendAllText(path, saveText + Environment.NewLine);
+            string saveText = $"{gameNumber}\n{currentTime}\n\n{gameStats}\n{breakLine}";
+            File.AppendAllText(path, saveText + Environment.NewLine);
         }
     }
 
@@ -101,12 +102,13 @@ public class MainApp
                 if (line == ($"Game: {index}")) //Olettaa, että pelit on merkitty muodossa "Game: 1"
                 {
                     correctGame = true;
-                }else if(line.Contains("Game")) //jos sana Game löytyy mutta indexi väärä
+                }
+                else if (line.Contains("Game")) //jos sana Game löytyy mutta indexi väärä
                 {
                     correctGame = false;
                 }
 
-                if(correctGame == true)
+                if (correctGame == true)
                 {
                     Console.WriteLine(line);
                 }
@@ -203,9 +205,9 @@ public class MainApp
         int amountOfGames = 0;
         if (File.Exists(path))
         {
-            foreach(string line in File.ReadAllLines(path))
+            foreach (string line in File.ReadAllLines(path))
             {
-                if(line == breakLine)
+                if (line == breakLine)
                 {
                     amountOfGames++;
                 }
@@ -221,7 +223,7 @@ public class MainApp
     /// <param name="userChoiceInput"></param>
     /// <param name="selectedMode"></param>
     /// <param name="playerNumbers"></param>
-    
+
     private static void AskRoundNumber(out int numberOfRounds)
     {
         Console.WriteLine();
@@ -231,6 +233,12 @@ public class MainApp
         {
             Console.Write("How many rounds to play? (1-1,000,000): ");
             userInput = Console.ReadLine() ?? string.Empty;
+
+            if (userInput == string.Empty)
+            {
+                numberOfRounds = 1000000;
+                break;
+            }
 
             bool isNumber = int.TryParse(userInput, out numberOfRounds);
 
@@ -264,8 +272,8 @@ public class MainApp
         List<int> randomNumbers = new List<int>();
         int min = 1;
         int max = 40;
-       
-        for(int i = 0; i < 7; i++)
+
+        for (int i = 0; i < 7; i++)
         {
             while (true) //Jos numero löytyy jo listasta arvotaan uusi niin pitkään kunnes se on uniikki
             {
@@ -276,7 +284,7 @@ public class MainApp
                     randomNumbers.Add(randomNumber);
                     break;
                 }
-            }   
+            }
         }
         return randomNumbers;
     }
@@ -286,17 +294,17 @@ public class MainApp
     /// </summary>
     /// <param name="numbers"></param>
     /// <returns></returns>
-    static bool ValidateNumbers(List<int> numbers) 
+    static bool ValidateNumbers(List<int> numbers)
     {
-        List <int> uniqueNumbers = new List<int>();
+        List<int> uniqueNumbers = new List<int>();
 
         if (numbers.Count != 7) //Tarkista onko käyttäjä syöttänyt tasan 7 numeroa
         {
             Console.WriteLine("You must input 7 numbers");
             return false;
         }
-        
-        foreach(int number in numbers)
+
+        foreach (int number in numbers)
         {
             if (number > 40 || number < 1)
             {
@@ -311,7 +319,7 @@ public class MainApp
             }
             uniqueNumbers.Add(number);
         }
-        return true; 
+        return true;
     }
 
     /// <summary>
@@ -325,8 +333,9 @@ public class MainApp
         List<int> lottoNumbers = new();
         List<int> defaultNumbers = new([1, 2, 3, 4, 5, 6, 7]);
 
-        while (!isValidNumbers || !isNumber) 
+        while (!isValidNumbers || !isNumber)
         {
+            isNumber = true;
             Console.Write("Enter 7 unique numbers between 1 and 40, separated by commas: ");
             string userInput = Console.ReadLine() ?? string.Empty;
             lottoNumbers = [];
@@ -341,19 +350,16 @@ public class MainApp
 
             string[] parts = userInput.Split(',');
 
-            
-
-            foreach(string part in parts)
+            foreach (string part in parts)
             {
-                if(int.TryParse(part, out int n))
+                if (int.TryParse(part, out int n))
                 {
                     lottoNumbers.Add(n);
-                    isNumber = true;
                 }
                 else
                 {
                     Console.WriteLine("All inputs must be valid numbers");
-                    isNumber = false; //Mikäli käyttäjä syöttää muuta, kuin numeroita asetetaan isnumber falseksi
+                    isNumber = false;
                     break;
                 }
             }
@@ -373,7 +379,7 @@ public class MainApp
         return lottoNumbers;
     }
 
-    static void PrintEndScreen(int totalRounds, int totalSpent, int totalWinnings, int result) 
+    static void PrintEndScreen(int totalRounds, int totalSpent, int totalWinnings, int result)
     {
         if (totalRounds > 0)
         {
@@ -391,11 +397,11 @@ public class MainApp
 
 
     static void PrintAfterRound(int totalRounds, int totalSpent, int totalWinnings)
-    { 
+    {
         Console.Write($"\rRounds: {totalRounds} | Spent: {totalSpent},00 € | Won: {totalWinnings},00 €");
     }
 
-   
+
     static void PlayGame(List<int> playerNumbers, int selectedMode, int roundNumber, out int totalRounds, out int moneySpent, out int totalWon, out int netResult)
     {
         int roundPrice = 1; //hinta, jonka 1 kierros maksaa
@@ -409,10 +415,9 @@ public class MainApp
         void PlayOneRound()
         {
             roundsPlayed++;
-            totalSpent += roundPrice; 
+            totalSpent += roundPrice;
             matchesPerGame = CompareNumbers(playerNumbers, RandomizeLottery(random)); //Laskee montako oikein pelaaja sai
             totalWinnings += GetPayout(matchesPerGame);
-            PrintAfterRound(roundsPlayed, totalSpent, totalWinnings);
         }
 
         if (selectedMode == 1) //Peli 1
@@ -421,7 +426,6 @@ public class MainApp
             for (int i = 0; i < roundNumber; i++)
             {
                 PlayOneRound();
-                Thread.Sleep(10); //"nukuttaa" threadin joka kierroksen välissä siksi, ettei peli kuormita prosessoria
             }
         }
         else if (selectedMode == 2) //Peli 2
@@ -430,7 +434,7 @@ public class MainApp
             while (true)
             {
                 PlayOneRound();
-
+                PrintAfterRound(roundsPlayed, totalSpent, totalWinnings);
                 if (Console.KeyAvailable) //Jos käyttäjä painaa jotain näppäimistössä, tämä mahdollistaa sen, että luuppi pyörii kunnes käyttäjä painaa jotain
                 {
                     ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true); //lukee käyttäjän painaman näppäimen, mutta ei näytä sitä consolessa
@@ -459,11 +463,11 @@ public class MainApp
         Console.WriteLine();
     }
 
-   /// <summary>
-   /// Palauttaa osumien mukaan rahasumman
-   /// </summary>
-   /// <param name="matches"></param>
-   /// <returns></returns>
+    /// <summary>
+    /// Palauttaa osumien mukaan rahasumman
+    /// </summary>
+    /// <param name="matches"></param>
+    /// <returns></returns>
     static int GetPayout(int matches)
     {
         switch (matches)
@@ -497,7 +501,7 @@ public class MainApp
     {
         int amountOfMatches = 0;
 
-        foreach(int number in playerNumbers)
+        foreach (int number in playerNumbers)
         {
             if (randomNumbers.Contains(number))
             {
