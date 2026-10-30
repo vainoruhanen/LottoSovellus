@@ -58,10 +58,11 @@ public class MainApp
     {
         string gameStats = $"Player Numbers: [{string.Join(", ", playerNumbers)}]\nRounds played: {totalRounds}\nMoney spent: {moneySpent},00€\nMoney won: {totalWon},00€\nNet result: {netResult},00€";
         string gameNumber = $"Game: {CountGames(path, breakLine) + 1}";
+        string currentTime = $"({DateTime.Now.ToString("dd.MM.yyyy, HH':'mm':'ss")})";
 
-        File.AppendAllText(path, gameNumber + Environment.NewLine);
-        File.AppendAllText(path, gameStats + Environment.NewLine);
-        File.AppendAllText(path, breakLine + Environment.NewLine);
+        string saveText = $"{gameNumber} {currentTime}\n{gameStats}\n{breakLine}";
+
+        File.AppendAllText(path, saveText + Environment.NewLine);
     }
 
     /// <summary>
